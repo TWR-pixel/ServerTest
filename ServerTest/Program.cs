@@ -11,6 +11,8 @@ while (true)
 {
     Console.WriteLine("Wait..");
 
+    server.Start();
+
     var client = server.AcceptTcpClient();
     var stream = client.GetStream();
 
