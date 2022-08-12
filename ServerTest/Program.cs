@@ -1,49 +1,27 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
-TcpListener server = null;
+var code = "code123";
+var ip = IPAddress.Parse("5.63.157.232");
+var port = 160;
 
-int port = 160;
-try
+var server = new TcpListener(ip, port);
+
+while (true)
 {
-    IPAddress localAddr = IPAddress.Parse("5.63.157.232");
-    server = new TcpListener(localAddr, port);
+    Console.WriteLine("Wait..");
 
-    // запуск слушателя
-    server.Start();
+    var client = server.AcceptTcpClient();
+    var stream = client.GetStream();
 
-    while (true)
+    var reader = new StreamReader(stream);
+    var msg = reader.ReadLine();
+
+    if (!msg.Contains(code))
     {
-        Console.WriteLine("Ожидание подключений... ");
-
-        // получаем входящее подключение
-        TcpClient client = server.AcceptTcpClient();
-        Console.WriteLine("Подключен клиент. Выполнение запроса...");
-
-        // получаем сетевой поток для чтения и записи
-        NetworkStream stream = client.GetStream();
-
-        // сообщение для отправки клиенту
-        string response = "Привет мир";
-        // преобразуем сообщение в массив байтов
-        byte[] data = Encoding.UTF8.GetBytes(response);
-
-        // отправка сообщения
-        stream.Write(data, 0, data.Length);
-        Console.WriteLine("Отправлено сообщение: {0}", response);
-        // закрываем поток
-        stream.Close();
-        // закрываем подключение
-        client.Close();
+        Console.WriteLine("error");
+        return;
     }
-}
-catch (Exception e)
-{
-    Console.WriteLine(e.Message);
-}
-finally
-{
-    if (server != null)
-        server.Stop();
+
+    Console.WriteLine(msg);
 }
